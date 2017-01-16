@@ -7,6 +7,7 @@ import ipfs_android.beenotung.github.com.ipfsandroid.AndroidLib.functional.Maybe
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.Future;
 
 import static ipfs_android.beenotung.github.com.ipfsandroid.AndroidLib.functional.just;
 import static ipfs_android.beenotung.github.com.ipfsandroid.AndroidLib.functional.none;
@@ -45,9 +46,23 @@ public class IPFS {
 
     static final String ipfsBaseUrl = "https://gateway.ipfs.io/ipfs/";
 
-    static void install(Context context) {
-        String url = ipfsBaseUrl+getBinaryHashByABI(Build.CPU_ABI);
-new URL(url).openStream()
+    /**
+     * return Exception or String "ok"
+     * */
+    static Future<Object> install(final Context context) {
+        return AndroidLib.thread.forkAndRun(new AndroidLib.lang.Producer<Object>() {
+            @Override
+            public Object apply() {
+                try {
+                    String url = ipfsBaseUrl + getBinaryHashByABI(Build.CPU_ABI);
+                    File binaryFile = getBinaryFile(context);
+                    AndroidLib.network.httpsDownloadFile(new URL(url), binaryFile);
+                    return "ok";
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return e;
+                }
+            }
+        });
     }
-
 }

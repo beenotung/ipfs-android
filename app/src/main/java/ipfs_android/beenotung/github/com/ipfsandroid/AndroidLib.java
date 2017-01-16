@@ -2,13 +2,14 @@ package ipfs_android.beenotung.github.com.ipfsandroid;
 
 import java.io.*;
 import java.net.URL;
+import java.util.concurrent.*;
 
 /**
  * Created by beenotung on 1/16/17.
  */
 public class AndroidLib {
     static class functional {
-        static interface Maybe<A> {
+        interface Maybe<A> {
             A getValue();
 
             boolean isJust();
@@ -46,6 +47,41 @@ public class AndroidLib {
     static class lang {
         static <A> A[] arrayOf(A... args) {
             return args;
+        }
+
+        interface Producer<A> {
+            A apply();
+        }
+
+        interface Consumer<A> {
+            void apply(A a);
+        }
+
+        interface Function<A, B> {
+            B apply(A a);
+        }
+
+        class Pair<A, B> {
+            final A a;
+            final B b;
+
+            Pair(A a, B b) {
+                this.a = a;
+                this.b = b;
+            }
+        }
+    }
+
+    static class thread {
+        static <A> Future<A> forkAndRun(final lang.Producer<A> f) {
+            FutureTask<A> task = new FutureTask<A>(new Callable<A>() {
+                @Override
+                public A call() throws Exception {
+                    return f.apply();
+                }
+            });
+            Executors.newCachedThreadPool().execute(task);
+            return task;
         }
     }
 
