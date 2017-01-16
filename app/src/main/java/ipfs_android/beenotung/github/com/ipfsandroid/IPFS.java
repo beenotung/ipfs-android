@@ -1,10 +1,12 @@
 package ipfs_android.beenotung.github.com.ipfsandroid;
 
 import android.content.Context;
+import android.os.Build;
 import ipfs_android.beenotung.github.com.ipfsandroid.AndroidLib.functional.Maybe;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import static ipfs_android.beenotung.github.com.ipfsandroid.AndroidLib.functional.just;
 import static ipfs_android.beenotung.github.com.ipfsandroid.AndroidLib.functional.none;
@@ -22,7 +24,7 @@ public class IPFS {
         return new File(context.getFilesDir(), "ipfsbin");
     }
 
-    static boolean isReady(Context context) {
+    static boolean isInstalled(Context context) {
         return new File(getRepoPath(context), "version").exists();
     }
 
@@ -40,5 +42,12 @@ public class IPFS {
         String[] env = arrayOf("IPFS_PATH=" + getRepoPath(context).getAbsoluteFile());
         return Runtime.getRuntime().exec(command, env);
     }
-//    static void downloadFile()
+
+    static final String ipfsBaseUrl = "https://gateway.ipfs.io/ipfs/";
+
+    static void install(Context context) {
+        String url = ipfsBaseUrl+getBinaryHashByABI(Build.CPU_ABI);
+new URL(url).openStream()
+    }
+
 }

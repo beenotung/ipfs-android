@@ -1,6 +1,7 @@
 package ipfs_android.beenotung.github.com.ipfsandroid;
 
-import java.util.Map;
+import java.io.*;
+import java.net.URL;
 
 /**
  * Created by beenotung on 1/16/17.
@@ -45,6 +46,20 @@ public class AndroidLib {
     static class lang {
         static <A> A[] arrayOf(A... args) {
             return args;
+        }
+    }
+
+    static class network {
+        static int bufferSize = 1024;
+
+        static void httpsDownloadFile(URL url, File output) throws IOException {
+            FileOutputStream outputStream = new FileOutputStream(output);
+            byte[] buffer = new byte[bufferSize];
+            int len = 0;
+            InputStream inputStream = url.openStream();
+            while ((len = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, len);
+            }
         }
     }
 }
